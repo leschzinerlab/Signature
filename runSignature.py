@@ -1,5 +1,6 @@
 #!/usr/bin/env python 
 
+
 import optparse
 from sys import *
 import os,sys,re
@@ -53,15 +54,16 @@ def setupParserOptions():
 
 #=============================
 def checkConflicts(params):
-        if not os.path.exists(params['input']):
-                print "\nError: micrograph file '%s' does not exist\n" % params['input']
-                sys.exit()
+        if not params['all']:
+		if not os.path.exists(params['input']):
+                	print "\nError: micrograph file '%s' does not exist\n" % params['input']
+                	sys.exit()
         if params['template'][-4:] != '.img':
         	print 'Template stack extension %s is not recognized as a .img file' %(params['template'][-4:])
                 sys.exit()
 
 #=============================
-def singleMicrograph(micro,apixM,lcf,diam,boxsize,binning):
+def singleMicrograph(micro,apixM,lcf,diam,boxsize,binning,allfiles):
 
 	#Remove existing temporary files
 	if os.path.exists('micro.dwn.mrc'):
@@ -115,8 +117,11 @@ def convertSPD_to_BOX(spd,micro,box,binning):
 	
 	f = open(spd,'r')
 	if os.path.exists('%s.box' %(micro[:-4])):
-                print "\nError: output box file already exists %s.box, exiting.\n" %(params['input'][:-4])
-                sys.exit()
+                print "\nError: output box file already exists %s.box\n" %(micro[:-4])
+                if params['all'] is True:
+			return 
+		if params['all'] is False: 
+			sys.exit()
 
 	o1 = open('%s.box'%(micro[:-4]),'w')
 
@@ -194,7 +199,7 @@ if __name__ == "__main__":
 	prepRefs(params)
 	if params['all'] is False:
 		#Analyzing a single micrograph only: micro,templates,apix,lcf
-		singleMicrograph(params['input'],params['apixMicro'],params['thresh'],params['diameter']/4,params['boxsize'],params['binning'])
+		singleMicrograph(params['input'],params['apixMicro'],params['thresh'],params['diameter']/4,params['boxsize'],params['binning'],params['all'])
 
 	if params['all'] is not False:
 
@@ -202,6 +207,9 @@ if __name__ == "__main__":
 
 		for micro in microlist: 
 
-			singleMicrograph(micro,params['apixMicro'],params['thresh'],params['diameter']/4,params['boxsize'],params['binning'])
+			if os.path.exists('%s.box' %(micro[:-4])):
+				continue
+
+			singleMicrograph(micro,params['apixMicro'],params['thresh'],params['diameter']/4,params['boxsize'],params['binning'],params['all'])
 	#Clean up
 	os.remove('template.dwn.mrc')
