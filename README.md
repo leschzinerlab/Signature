@@ -73,7 +73,7 @@ To run on a single micrograph:
 $ Signature/runSignature.py -i image001.mrc -t refs.img --apixMicro=2.15 --apixTemplate=4.3 --boxsize=200 --diam=600 --thresh=0.4 --mirror
 ```
 
-To run over a set of micrographs:
+To run over a set of micrographs in a directory:
 
 ```
 $ Signature/runSignature.py -t refs.img --apixMicro=2.15 --apixTemplate=4.3 --boxsize=200 --diam=600 --thresh=0.4 --mirror --all='*en.mrc'
